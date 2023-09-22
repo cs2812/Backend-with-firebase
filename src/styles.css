@@ -1,6 +1,11 @@
 * {
   background-color: #f6f8fa;
+  -ms-overflow-style: none;
   /* margin: 0%; */
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
 .App {
   padding: 0%;
@@ -150,6 +155,7 @@ button:hover {
   border: none;
   box-shadow: none;
 }
+
 .messageContainerDiv span {
   color: greenyellow;
   background-color: transparent;
@@ -163,7 +169,7 @@ button:hover {
   background-color: #2791cf;
   border-radius: 50px 10px 10px 50px;
   text-align: right;
-  padding: 5px 15px;
+  padding: 1px 15px;
   max-width: 400px;
   margin-bottom: 15px;
 }
@@ -172,7 +178,7 @@ button:hover {
   justify-content: space-between;
   color: #3f3f3f;
   background-color: #ffffff;
-  padding: 5px 15px;
+  padding: 1px 15px;
   max-width: 400px;
   margin-bottom: 15px;
   border-radius: 10px 50px 50px 10px;

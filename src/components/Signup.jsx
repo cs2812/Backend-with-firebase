@@ -35,8 +35,8 @@ export default function Signup() {
       .then((snapshot) => {
         if (snapshot.exists()) {
           // Checking email existence for new user
-          let res = snapshot.val();
-          let resData = Object.values(res);
+          let response = snapshot.val();
+          let resData = Object.values(response);
           let findRes = resData.find(({ email }) => email === data.email);
 
           //if Email is not present in database

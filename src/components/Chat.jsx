@@ -73,7 +73,7 @@ export default function Chat() {
                     <span className="userImage">
                       <img src={ele.avatar || tempImg} alt="" />
                     </span>
-                    <span>{ele.username}</span>
+                    <span>{ele.uid==uid?"You":ele.username}</span>
                   </span>
                   <span style={{ marginTop: "6px" }}>
                     {ele.onLine ? (

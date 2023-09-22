@@ -57,6 +57,8 @@ const MessageBox = ({ data }) => {
             justifyContent: "left",
             boxShadow:
               "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px",
+              position:"fixed",
+              width:"81.2%"
           }}
         >
           <div
@@ -78,7 +80,7 @@ const MessageBox = ({ data }) => {
             <span>{user.username}</span>
           </div>
         </div>
-
+<div style={{paddingTop:"4rem"}}></div>
         {data.map((ele,i) => (
           <div key={ele.cid} className="messageContainerDiv">
             <div className={ele.from===user.uid?"fromChat":"myChat"}>

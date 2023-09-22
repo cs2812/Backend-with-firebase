@@ -1,4 +1,4 @@
-import { getDatabase, ref, get, child, push, update } from "firebase/database";
+import { getDatabase, ref, get, child, update } from "firebase/database";
 const db = getDatabase();
 
 export const GetUser = async (id) => {
@@ -23,8 +23,8 @@ export const GetList = async (collection) => {
     const dbRef = ref(db);
     const snapshot = await get(child(dbRef, collection));
     if (snapshot.exists()) {
-      let res = snapshot.val();
-      data = Object.values(res);
+      let response = snapshot.val();
+      data = Object.values(response);
     } else {
       console.log("No data available");
     }
