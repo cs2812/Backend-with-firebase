@@ -5,12 +5,15 @@ import { AppContext } from "../Context/ContextApi";
 import {
   RecaptchaVerifier,
   signInWithPhoneNumber,
-  getAuth
+  getAuth,
 } from "firebase/auth";
-import { db, ref, get, child } from "../Firebase";
+import { getDatabase, ref, get, child, push, update } from "firebase/database";
+import { GetList, handleUserActive } from "../Helper/helperFunctions";
 
 export default function Login() {
-  const auth = getAuth();  
+  const auth = getAuth();
+  const db = getDatabase();
+
   // auth.languageCode = "it";
   const navigate = useNavigate();
   const [toggle, setToggle] = useState(true);
@@ -20,35 +23,37 @@ export default function Login() {
   const { setAuth } = useContext(AppContext);
   const [data, setData] = useState({
     email: "",
-    password: ""
+    password: "",
   });
-  // Loing with Email and Password
+
+  // Login with Email and Password
   const handleSubmit = (e) => {
     e.preventDefault();
-    const dbRef = ref(db);
-    get(child(dbRef, `users`))
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          let res = snapshot.val();
-          let resData = Object.values(res);
-          let findRes = resData.find(
-            ({ email, password }) =>
-              email === data.email && password === data.password
-          );
-          if (findRes) {
-            setAuth(true);
-            localStorage.setItem("user", findRes.id);
-            // console.log("snap", findRes);
-            navigate("/");
-          } else {
-            alert("No data available");
-          }
+    GetList("users")
+      .then((res) => {
+        let findRes = res.find(
+          ({ email, password }) =>
+            email === data.email && password === data.password
+        );
+        if (findRes) {
+          handleUserActive(findRes)
+            .then((res) => {
+              alert(findRes.username + " You are online");
+              // console.log("update res",res)
+            })
+            .catch(() => {
+              alert("Something went wrong");
+            });
+          setAuth(true);
+          localStorage.setItem("user", findRes.uid);
+          // console.log("snap", findRes);
+          navigate("/");
         } else {
-          console.log("No data available");
+          alert("No data available");
         }
       })
-      .catch((error) => {
-        console.error(error);
+      .catch((err) => {
+        console.log(err);
       });
   };
 
@@ -66,7 +71,7 @@ export default function Login() {
           callback: (response) => {
             onSignInSubmit();
           },
-          defaultCountry: "IN"
+          defaultCountry: "IN",
         },
         auth
       );
@@ -84,12 +89,12 @@ export default function Login() {
         console.log("Sms Not sent", error);
       });
   }
-
   //Confirm OTP
   const handleVerifyOTP = () => {
     window.confirmationResult
       .confirm(otp)
       .then((res) => {
+        localStorage.setItem("user", otp);
         console.log("user", res);
         setAuth(true);
         alert("OTP verified");
@@ -108,93 +113,95 @@ export default function Login() {
       <div>
         <h3>Log In </h3>
       </div>
-      <div
-        style={{
-          marginTop: "-15px",
-          display: "flex",
-          justifyContent: "center",
-          gap: "20px"
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <label style={{ marginTop: "9px" }} htmlFor="">
-            Email
-          </label>
-          <input
-            checked={toggle === true}
-            onChange={() => setToggle(true)}
-            style={{ boxShadow: "none" }}
-            type="radio"
-          />
+      <div className="loginPage">
+        <div
+          style={{
+            marginTop: "-15px",
+            display: "flex",
+            justifyContent: "center",
+            gap: "20px",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <label style={{ marginTop: "9px" }} htmlFor="">
+              Email
+            </label>
+            <input
+              checked={toggle === true}
+              onChange={() => setToggle(true)}
+              style={{ boxShadow: "none" }}
+              type="radio"
+            />
+          </div>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <label style={{ marginTop: "9px" }} htmlFor="">
+              Mobile
+            </label>
+            <input
+              checked={toggle === false}
+              onChange={() => setToggle(false)}
+              style={{ boxShadow: "none" }}
+              type="radio"
+            />
+          </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <label style={{ marginTop: "9px" }} htmlFor="">
-            Mobile
-          </label>
-          <input
-            checked={toggle === false}
-            onChange={() => setToggle(false)}
-            style={{ boxShadow: "none" }}
-            type="radio"
-          />
-        </div>
-      </div>
 
-      {/* Email and Mobile conditional rendering*/}
-      {toggle ? (
-        // Email and password login
-        <form action="" onSubmit={handleSubmit}>
-          <input
-            onChange={(e) => setData({ ...data, email: e.target.value })}
-            value={data.email}
-            required
-            type="email"
-            placeholder="Enter email"
-          />
-          <br />
-          <input
-            onChange={(e) => setData({ ...data, password: e.target.value })}
-            value={data.password}
-            required
-            type="password"
-            placeholder="Enter password"
-          />
-          <br />
-          <button>Login</button>
-        </form>
-      ) : (
-        <div>
-          {/* Mobile OTP login */}
-          <input
-            // onKeyPress={(e) => e.key === "Enter" && handleMobileLogin()}
-            type="text"
-            placeholder="Enter mobile number"
-            onChange={(e) => setPhone(e.target.value)}
-          />
-          <div id="recaptcha-container"></div>
-          {/* <PhoneInput country="US" /> */}
-          <button
-            style={{
-              display: showOTP ? "none" : "block",
-              margin: "auto",
-              marginTop: "10px"
-            }}
-            onClick={onSignInSubmit}
-          >
-            Submit
-          </button>
-          {showOTP && (
-            <div>
-              <input
-                onChange={(e) => setOTP(e.target.value)}
-                type="number"
-                placeholder="Enter OTP"
-              />
-              <button onClick={handleVerifyOTP}>Verify</button>
-            </div>
-          )}
-        </div>
-      )}
+        {/* Email and Mobile conditional rendering*/}
+        {toggle ? (
+          // Email and password login
+          <form action="" onSubmit={handleSubmit}>
+            <input
+              onChange={(e) => setData({ ...data, email: e.target.value })}
+              value={data.email}
+              required
+              type="email"
+              placeholder="Enter email"
+            />
+            <br />
+            <input
+              onChange={(e) => setData({ ...data, password: e.target.value })}
+              value={data.password}
+              required
+              type="password"
+              placeholder="Enter password"
+            />
+            <br />
+            <button>Login</button>
+          </form>
+        ) : (
+          <div>
+            {/* Mobile OTP login */}
+            <input
+              // onKeyPress={(e) => e.key === "Enter" && handleMobileLogin()}
+              type="text"
+              placeholder="Enter mobile number"
+              onChange={(e) => setPhone(e.target.value)}
+            />
+            <div id="recaptcha-container"></div>
+            {/* <PhoneInput country="US" /> */}
+            <button
+              style={{
+                display: showOTP ? "none" : "block",
+                margin: "auto",
+                marginTop: "10px",
+              }}
+              onClick={onSignInSubmit}
+            >
+              Submit
+            </button>
+            {showOTP && (
+              <div>
+                <input
+                  onChange={(e) => setOTP(e.target.value)}
+                  type="number"
+                  placeholder="Enter OTP"
+                />
+                <button onClick={handleVerifyOTP}>Verify</button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -4,6 +4,7 @@ export const AppContext = createContext();
 
 export default function ContextApi({ children }) {
   const [isAuth, setAuth] = useState(localStorage.getItem("user") || false);
+  
   // useEffect(() => {
   //   let isPre = localStorage.getItem("user");
   //   if (!isPre) {

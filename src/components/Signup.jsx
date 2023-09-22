@@ -6,21 +6,24 @@ export default function Signup() {
   const navigate = useNavigate();
   const [data, setData] = useState({
     username: "",
+    avatar:"",
     email: "",
-    password: ""
+    password: "",
+    phoneNumber:"",
+    onLine:false,
   });
 
+//Register user after checking for duplicate email
   const doRegister = () => {
-    let id = Math.floor(10 + Math.random() * 1000);
-    set(ref(db, "users/" + id), { ...data, id })
+    let uid = Math.floor(10 + Math.random() * 1000000);
+    set(ref(db, "users/" + uid), { ...data, uid })
       .then(() => {
-        // Data saved successfully!
         alert("Register Successfully");
         navigate("/login");
       })
       .catch((error) => {
         // The write failed...
-        alert("Registeration failed.Try Again ");
+        alert("Registration failed.Try Again ");
       });
   };
 
@@ -41,7 +44,7 @@ export default function Signup() {
             //if Email is present in database
             doRegister();
           } else {
-            alert("user allready exist");
+            alert("user already exist");
           }
         } else {
           //if database is empty
@@ -50,7 +53,7 @@ export default function Signup() {
       })
       .catch((error) => {
         console.error(error);
-        alert("Registeration failed.Try Again ");
+        alert("Registration failed.Try Again ");
       });
   };
 
@@ -59,7 +62,7 @@ export default function Signup() {
       <div>
         <h3>Sign Up</h3>
       </div>
-      <form style={{ marginTop: "-10px" }} action="" onSubmit={handleSubmit}>
+      <form className="signupPage" style={{ marginTop: "-10px" }} action="" onSubmit={handleSubmit}>
         <input
           onChange={(e) => setData({ ...data, username: e.target.value })}
           value={data.username}
@@ -69,12 +72,21 @@ export default function Signup() {
         />
         <br />
         <input
+          onChange={(e) => setData({ ...data, phoneNumber: e.target.value })}
+          value={data.phoneNumber}
+          required
+          type="number"
+          placeholder="Enter Mobile Number"
+        />
+        <br />
+        <input
           onChange={(e) => setData({ ...data, email: e.target.value })}
           value={data.email}
           required
           type="email"
           placeholder="Enter Email"
         />
+        
         <br />
         <input
           onChange={(e) => setData({ ...data, password: e.target.value })}

@@ -54,7 +54,7 @@ export default function ImagesUpload() {
         }}
       />
       <button onClick={uploadImage}>Upload</button>
-      <div style={{ marginTop: "20px" }}>
+      <div className="fileDiv" style={{ marginTop: "20px" }}>
         {getFiles &&
           getFiles.map((ele, i) => {
             return (
