@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { GetUser } from "../Helper/helperFunctions";
+import { useNavigate } from "react-router-dom";
 
-const Profile = () => {
+const Profile = ({ showProfile }) => {
   const [currentUser, setCurrentUser] = useState({});
+  const navigate = useNavigate();
+  const handleUserProfile = () => {
+    navigate(`/profile`);
+    showProfile(true);
+  };
   useEffect(() => {
     let id = localStorage.getItem("user");
     GetUser(id)
@@ -23,6 +29,7 @@ const Profile = () => {
       }}
     >
       <div
+        onClick={handleUserProfile}
         style={{
           display: "flex",
           gap: "5px",

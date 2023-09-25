@@ -2,23 +2,25 @@ import { useEffect, useState } from "react";
 import { db, ref, get, set, child, onValue } from "../Firebase";
 import MessageBox from "./MessageBox";
 import Profile from "./Profile";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { HiOutlineStatusOffline, HiOutlineStatusOnline } from "react-icons/hi";
-import { GetList } from "../Helper/helperFunctions";
 
 export default function Chat() {
   const uid = localStorage.getItem("user");
   const tempImg =
     "https://media.istockphoto.com/id/1298261537/vector/blank-man-profile-head-icon-placeholder.jpg?s=612x612&w=0&k=20&c=CeT1RVWZzQDay4t54ookMaFsdi7ZHVFg2Y5v7hxigCA=";
 
-  const [data, setData] = useState([
-    // "myChat",
-    // "fromChat",
-  ]);
+  const [data, setData] = useState([]);
   const [showChat, setShowChat] = useState(false);
+  const [showProfile, setProfile] = useState(false);
   const [userList, setUserList] = useState([]);
   const navigate = useNavigate();
   const { id } = useParams();
+  const { pathname } = useLocation();
+  // console.log("location", location.pathname);
+  // console.log("chat", showChat);
+  // console.log("profile", showProfile);
+  // console.log("id", id);
 
   const StartChatting = (id) => {
     navigate(`/chat/${id}`);
@@ -32,27 +34,36 @@ export default function Chat() {
   }, []);
 
   useEffect(() => {
-    if (id) {
-      setShowChat(true);
-    } else {
+    if (!id && pathname === "/profile") {
+      setProfile(true);
       setShowChat(false);
     }
-    onValue(ref(db, "chat"), (snapshot) => {
-      let data = snapshot.val();
-      data = Object.values(data);
-      let havingChat = data.filter(
-        (ele) =>
-          (ele.from === +uid && ele.to === +id) ||
-          (ele.from === +id && ele.to === +uid)
-      );
-      havingChat.sort((a, b) => a.cat - b.cat);
-      setData(havingChat);
-    });
+    if (id && pathname !== "/profile") {
+      setShowChat(true);
+      setProfile(false);
+    }
+    if (!id && pathname !== "/profile") {
+      setShowChat(false);
+      setProfile(false);
+    }
+    if (id) {
+      onValue(ref(db, "chat"), (snapshot) => {
+        let data = snapshot.val();
+        data = Object.values(data);
+        let havingChat = data.filter(
+          (ele) =>
+            (ele.from === +uid && ele.to === +id) ||
+            (ele.from === +id && ele.to === +uid)
+        );
+        havingChat.sort((a, b) => a.cat - b.cat);
+        setData(havingChat);
+      });
+    }
   }, [id]);
   return (
     <div style={{ marginTop: "1px" }}>
       {/* <h3>Firebase Realtime Chat App</h3> */}
-      <Profile />
+      <Profile showProfile={setProfile} />
       <div className="chatContainer">
         <div className="useList">
           {userList &&
@@ -73,7 +84,7 @@ export default function Chat() {
                     <span className="userImage">
                       <img src={ele.avatar || tempImg} alt="" />
                     </span>
-                    <span>{ele.uid==uid?"You":ele.username}</span>
+                    <span>{ele.uid == uid ? "You" : ele.username}</span>
                   </span>
                   <span style={{ marginTop: "6px" }}>
                     {ele.onLine ? (
@@ -87,14 +98,21 @@ export default function Chat() {
             })}
         </div>
         <div className="chatBox">
-          {!showChat && !data.length ? (
+          {!showChat && !showProfile && (
             <div>
               <h3>Welcome to</h3>
               <h1>C-Chat</h1>
             </div>
-          ) : (
+          )}
+          {showChat && (
             <div style={{ marginTop: "5px" }}>
               <MessageBox data={data} />
+            </div>
+          )}
+          {showProfile && (
+            <div>
+              <h3>Welcome to</h3>
+              <h1>Profile Page</h1>
             </div>
           )}
         </div>

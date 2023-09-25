@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import { GetUser } from "../Helper/helperFunctions";
 import { db, ref, get, set, child, onValue } from "../Firebase";
 
@@ -8,6 +8,7 @@ const MessageBox = ({ data }) => {
   const [currentUser, setCurrentUser] = useState({});
   const [message, setMessage] = useState("");
   const { id } = useParams();
+
 
   const submitChat = () => {
     let cid = Math.floor(10 + Math.random() * 1000);

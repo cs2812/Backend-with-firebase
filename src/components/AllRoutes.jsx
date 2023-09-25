@@ -4,7 +4,7 @@ import Login from "./Login";
 import PrivateRoute from "../HOF/PrivateRoute";
 import Home from "../pages/Home";
 
-export default function AllRoutes({setCurrentUser}) {
+export default function AllRoutes({ setCurrentUser }) {
   return (
     <Routes>
       <Route
@@ -17,6 +17,14 @@ export default function AllRoutes({setCurrentUser}) {
       ></Route>
       <Route
         path="/chat/:id"
+        element={
+          <PrivateRoute>
+            <Home />
+          </PrivateRoute>
+        }
+      ></Route>
+      <Route
+        path="/profile"
         element={
           <PrivateRoute>
             <Home />
