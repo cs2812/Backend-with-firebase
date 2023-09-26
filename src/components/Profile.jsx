@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { GetUser } from "../Helper/helperFunctions";
 import { useNavigate } from "react-router-dom";
+import { Box } from "@chakra-ui/react";
 
 const Profile = ({ showProfile }) => {
   const [currentUser, setCurrentUser] = useState({});
   const navigate = useNavigate();
   const handleUserProfile = () => {
-    navigate(`/profile`);
+    navigate(`/chat/profile`);
     showProfile(true);
   };
   useEffect(() => {
@@ -21,9 +22,10 @@ const Profile = ({ showProfile }) => {
   }, []);
 
   return (
-    <div
+    <Box
+    p="0.5rem 0.5rem"
+    className="light-gray-bg"
       style={{
-        padding: "0.3rem 0.5rem",
         display: "flex",
         justifyContent: "right",
       }}
@@ -47,7 +49,7 @@ const Profile = ({ showProfile }) => {
         </span>
         <span>{currentUser.username}</span>
       </div>
-    </div>
+    </Box>
   );
 };
 

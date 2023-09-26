@@ -24,7 +24,7 @@ export default function AllRoutes({ setCurrentUser }) {
         }
       ></Route>
       <Route
-        path="/profile"
+        path="/chat/profile"
         element={
           <PrivateRoute>
             <Home />

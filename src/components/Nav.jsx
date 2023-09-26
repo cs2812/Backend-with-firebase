@@ -1,11 +1,13 @@
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useContext } from "react";
 import { AppContext } from "../Context/ContextApi";
 import { GetUser, handleUserDeactivate } from "../Helper/helperFunctions";
 export default function Nav() {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const { isAuth, setAuth } = useContext(AppContext);
   // console.log(isAuth);
+  // console.log("NAV", pathname);
 
   const navigatePage = (route) => {
     navigate(route);
@@ -17,7 +19,7 @@ export default function Nav() {
     // console.log(result);
     handleUserDeactivate(result)
       .then((res) => {
-        alert(result.username+" you are offline");
+        alert(result.username + " you are offline");
       })
       .catch((err) => {
         alert("something went wrong");
@@ -30,7 +32,16 @@ export default function Nav() {
 
   return (
     <div className="nav">
-      <Link className="linktag" style={{ textDecoration: "none" }} to="/">
+      <Link
+        className="linktag"
+        style={{ textDecoration: "none" }}
+        onClick={(e) => {
+          e.preventDefault();
+          if (!pathname.includes("chat")) {
+            navigate("/");
+          }
+        }}
+      >
         ChatApp
       </Link>
       {isAuth ? (
@@ -43,7 +54,7 @@ export default function Nav() {
         </Link>
       )}
       <Link className="linktag" to="/signup">
-        Signup
+        Sign Up
       </Link>
     </div>
   );

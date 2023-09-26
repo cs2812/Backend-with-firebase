@@ -9,6 +9,15 @@ import {
 } from "firebase/auth";
 import { getDatabase, ref, get, child, push, update } from "firebase/database";
 import { GetList, handleUserActive } from "../Helper/helperFunctions";
+import {
+  Box,
+  Button,
+  Input,
+  Radio,
+  RadioGroup,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 
 export default function Login() {
   const auth = getAuth();
@@ -16,7 +25,7 @@ export default function Login() {
 
   // auth.languageCode = "it";
   const navigate = useNavigate();
-  const [toggle, setToggle] = useState(true);
+  const [toggle, setToggle] = useState("1");
   const [showOTP, setShowOTP] = useState(false);
   const [otp, setOTP] = useState(0);
   const [phone, setPhone] = useState(0);
@@ -110,68 +119,63 @@ export default function Login() {
   return (
     <div>
       {/* Toggle button */}
+      <Box pt="20px"></Box>
       <div>
-        <h3>Log In </h3>
+        <Text fontSize={"4xl"}>Log In </Text>
       </div>
-      <div className="loginPage">
+      <Box className="loginPage">
         <div
           style={{
-            marginTop: "-15px",
             display: "flex",
             justifyContent: "center",
             gap: "20px",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <label style={{ marginTop: "9px" }} htmlFor="">
-              Email
-            </label>
-            <input
-              checked={toggle === true}
-              onChange={() => setToggle(true)}
-              style={{ boxShadow: "none" }}
-              type="radio"
-            />
-          </div>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <label style={{ marginTop: "9px" }} htmlFor="">
-              Mobile
-            </label>
-            <input
-              checked={toggle === false}
-              onChange={() => setToggle(false)}
-              style={{ boxShadow: "none" }}
-              type="radio"
-            />
-          </div>
+          <Box p="1rem">
+            <RadioGroup w="250px" m="auto" onChange={setToggle} value={toggle}>
+              <Stack direction="row">
+                <Radio size={"lg"} value="1">
+                  Email
+                </Radio>
+                <Radio size={"lg"} value="2">
+                  Mobile
+                </Radio>
+              </Stack>
+            </RadioGroup>
+          </Box>
         </div>
 
         {/* Email and Mobile conditional rendering*/}
-        {toggle ? (
+        {toggle==="1" ? (
           // Email and password login
-          <form action="" onSubmit={handleSubmit}>
-            <input
-              onChange={(e) => setData({ ...data, email: e.target.value })}
-              value={data.email}
-              required
-              type="email"
-              placeholder="Enter email"
-            />
-            <br />
-            <input
-              onChange={(e) => setData({ ...data, password: e.target.value })}
-              value={data.password}
-              required
-              type="password"
-              placeholder="Enter password"
-            />
-            <br />
-            <button>Login</button>
-          </form>
+          <Box mt="20px">
+            <form action="" onSubmit={handleSubmit}>
+              <Input
+                onChange={(e) => setData({ ...data, email: e.target.value })}
+                value={data.email}
+                required
+                type="email"
+                placeholder="Enter email"
+              />
+              <br />
+              <Input
+                mt={"10px"}
+                onChange={(e) => setData({ ...data, password: e.target.value })}
+                value={data.password}
+                required
+                type="password"
+                placeholder="Enter password"
+              />
+              <br />
+              <Button mt="10px" w="100%" type="submit" colorScheme="linkedin">
+                Login
+              </Button>
+            </form>
+          </Box>
         ) : (
           <div>
             {/* Mobile OTP login */}
-            <input
+            <Input
               // onKeyPress={(e) => e.key === "Enter" && handleMobileLogin()}
               type="text"
               placeholder="Enter mobile number"
@@ -179,29 +183,31 @@ export default function Login() {
             />
             <div id="recaptcha-container"></div>
             {/* <PhoneInput country="US" /> */}
-            <button
-              style={{
-                display: showOTP ? "none" : "block",
-                margin: "auto",
-                marginTop: "10px",
-              }}
+            <Button
+              display={showOTP ? "none" : "block"}
+              m="auto"
+              mt="10px"
+              w={"100%"}
+              colorScheme="linkedin"
               onClick={onSignInSubmit}
             >
               Submit
-            </button>
+            </Button>
             {showOTP && (
               <div>
-                <input
+                <Input
                   onChange={(e) => setOTP(e.target.value)}
                   type="number"
                   placeholder="Enter OTP"
                 />
-                <button onClick={handleVerifyOTP}>Verify</button>
+                <Button w={"100%"} colorScheme="linkedin" onClick={handleVerifyOTP}>
+                  Verify
+                </Button>
               </div>
             )}
           </div>
         )}
-      </div>
+      </Box>
     </div>
   );
 }

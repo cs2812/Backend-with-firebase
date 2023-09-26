@@ -4,6 +4,7 @@ import MessageBox from "./MessageBox";
 import Profile from "./Profile";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { HiOutlineStatusOffline, HiOutlineStatusOnline } from "react-icons/hi";
+import { Box, Flex, Text } from "@chakra-ui/react";
 
 export default function Chat() {
   const uid = localStorage.getItem("user");
@@ -34,15 +35,15 @@ export default function Chat() {
   }, []);
 
   useEffect(() => {
-    if (!id && pathname === "/profile") {
+    if (!id && pathname === "/chat/profile") {
       setProfile(true);
       setShowChat(false);
     }
-    if (id && pathname !== "/profile") {
+    if (id && pathname !== "/chat/profile") {
       setShowChat(true);
       setProfile(false);
     }
-    if (!id && pathname !== "/profile") {
+    if (!id && pathname !== "/chat/profile") {
       setShowChat(false);
       setProfile(false);
     }
@@ -62,17 +63,16 @@ export default function Chat() {
   }, [id]);
   return (
     <div style={{ marginTop: "1px" }}>
-      {/* <h3>Firebase Realtime Chat App</h3> */}
       <Profile showProfile={setProfile} />
-      <div className="chatContainer">
-        <div className="useList">
+      <Box display={"flex"} h="85.5vh" fontWeight={"600"}>
+        <div className="useList light-gray-bg">
           {userList &&
             userList.map((ele, i) => {
               return (
                 <div
                   key={i}
                   onClick={() => StartChatting(ele.uid)}
-                  className="ChatUser"
+                  className="ChatUser "
                 >
                   <span
                     style={{
@@ -97,26 +97,34 @@ export default function Chat() {
               );
             })}
         </div>
-        <div className="chatBox">
+        <Box className="chatBox ">
           {!showChat && !showProfile && (
-            <div>
-              <h3>Welcome to</h3>
-              <h1>C-Chat</h1>
-            </div>
+            <Box h="100%">
+              <Flex
+                h="100%"
+                justifyContent={"center"}
+                direction={"column"}
+                textAlign={"center"}
+                fontSize={"5xl"}
+              >
+                <Text>Welcome To</Text>
+                <Text>C-Chat</Text>
+              </Flex>
+            </Box>
           )}
           {showChat && (
-            <div style={{ marginTop: "5px" }}>
+            <Box>
               <MessageBox data={data} />
-            </div>
+            </Box>
           )}
           {showProfile && (
-            <div>
+            <Box>
               <h3>Welcome to</h3>
               <h1>Profile Page</h1>
-            </div>
+            </Box>
           )}
-        </div>
-      </div>
+        </Box>
+      </Box>
     </div>
   );
 }

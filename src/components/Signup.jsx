@@ -1,19 +1,20 @@
 import { useState } from "react";
 import { db, ref, set, child, get } from "../Firebase";
 import { useNavigate } from "react-router-dom";
+import { Box, Button, Input, Text } from "@chakra-ui/react";
 
 export default function Signup() {
   const navigate = useNavigate();
   const [data, setData] = useState({
     username: "",
-    avatar:"",
+    avatar: "",
     email: "",
     password: "",
-    phoneNumber:"",
-    onLine:false,
+    phoneNumber: "",
+    onLine: false,
   });
 
-//Register user after checking for duplicate email
+  //Register user after checking for duplicate email
   const doRegister = () => {
     let uid = Math.floor(10 + Math.random() * 1000000);
     set(ref(db, "users/" + uid), { ...data, uid })
@@ -59,45 +60,55 @@ export default function Signup() {
 
   return (
     <div>
-      <div>
-        <h3>Sign Up</h3>
-      </div>
-      <form className="signupPage" style={{ marginTop: "-10px" }} action="" onSubmit={handleSubmit}>
-        <input
-          onChange={(e) => setData({ ...data, username: e.target.value })}
-          value={data.username}
-          required
-          type="text"
-          placeholder="Enter Username"
-        />
-        <br />
-        <input
-          onChange={(e) => setData({ ...data, phoneNumber: e.target.value })}
-          value={data.phoneNumber}
-          required
-          type="number"
-          placeholder="Enter Mobile Number"
-        />
-        <br />
-        <input
-          onChange={(e) => setData({ ...data, email: e.target.value })}
-          value={data.email}
-          required
-          type="email"
-          placeholder="Enter Email"
-        />
-        
-        <br />
-        <input
-          onChange={(e) => setData({ ...data, password: e.target.value })}
-          value={data.password}
-          required
-          type="password"
-          placeholder="Enter Password"
-        />
-        <br />
-        <button>Signup</button>
-      </form>
+      <Box pt="1rem"></Box>
+      <Box>
+        <Text fontSize={"4xl"}>Sign Up</Text>
+      </Box>
+      <Box mt="20px">
+        <form
+          className="signupPage"
+          style={{ marginTop: "-10px" }}
+          action=""
+          onSubmit={handleSubmit}
+        >
+          <Input
+            onChange={(e) => setData({ ...data, username: e.target.value })}
+            value={data.username}
+            required
+            type="text"
+            placeholder="Enter Username"
+          />
+          <br />
+          <Input
+            onChange={(e) => setData({ ...data, phoneNumber: e.target.value })}
+            value={data.phoneNumber}
+            required
+            type="number"
+            placeholder="Enter Mobile Number"
+          />
+          <br />
+          <Input
+            onChange={(e) => setData({ ...data, email: e.target.value })}
+            value={data.email}
+            required
+            type="email"
+            placeholder="Enter Email"
+          />
+
+          <br />
+          <Input
+            onChange={(e) => setData({ ...data, password: e.target.value })}
+            value={data.password}
+            required
+            type="password"
+            placeholder="Enter Password"
+          />
+          <br />
+          <Button type="submit" colorScheme="linkedin">
+            Sign Up
+          </Button>
+        </form>
+      </Box>
     </div>
   );
 }

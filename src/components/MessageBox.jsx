@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import {  useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { GetUser } from "../Helper/helperFunctions";
 import { db, ref, get, set, child, onValue } from "../Firebase";
+import { Box, Flex, Input, Text } from "@chakra-ui/react";
 
 const MessageBox = ({ data }) => {
   const [user, setUser] = useState({});
   const [currentUser, setCurrentUser] = useState({});
   const [message, setMessage] = useState("");
   const { id } = useParams();
-
 
   const submitChat = () => {
     let cid = Math.floor(10 + Math.random() * 1000);
@@ -50,62 +50,61 @@ const MessageBox = ({ data }) => {
   }, []);
   return (
     <div>
-      <div className="chatMessageBox">
+      <Flex
+        position={"fixed"}
+        top={"95px"}
+        justifyContent={"left"}
+        w={"100%"}
+        p="0.5rem 0.5rem"
+        bg={"white"}
+        boxShadow="base"
+      >
         <div
           style={{
-            padding: "0.3rem 0.5rem",
             display: "flex",
-            justifyContent: "left",
-            boxShadow:
-              "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px",
-              position:"fixed",
-              width:"81.2%"
+            gap: "10px",
+            alignItems: "center",
+            width: "max-content",
+            fontSize: "18px",
+            cursor: "pointer",
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
-              alignItems: "center",
-              width: "max-content",
-              fontSize: "18px",
-              cursor: "pointer",
-            }}
-          >
-            <span className="userImage">
-              <img
-                src="https://media.istockphoto.com/id/1298261537/vector/blank-man-profile-head-icon-placeholder.jpg?s=612x612&w=0&k=20&c=CeT1RVWZzQDay4t54ookMaFsdi7ZHVFg2Y5v7hxigCA="
-                alt=""
-              />
-            </span>
-            <span>{user.username}</span>
-          </div>
+          <span className="userImage">
+            <img
+              src="https://media.istockphoto.com/id/1298261537/vector/blank-man-profile-head-icon-placeholder.jpg?s=612x612&w=0&k=20&c=CeT1RVWZzQDay4t54ookMaFsdi7ZHVFg2Y5v7hxigCA="
+              alt=""
+            />
+          </span>
+          <span>{user.username}</span>
         </div>
-<div style={{paddingTop:"4rem"}}></div>
-        {data.map((ele,i) => (
+      </Flex>
+      <Box h="79vh" overflowY={"auto"}>
+        {/* 2nd User Profile bar */}
+        <Box pt="3.5rem"></Box>
+        {data.map((ele, i) => (
           <div key={ele.cid} className="messageContainerDiv">
-            <div className={ele.from===user.uid?"fromChat":"myChat"}>
-              <p
-                style={{
-                  backgroundColor: "transparent",
-                  fontSize: "16px",
-                }}
-              >
+            <Box
+              textAlign={ele.from === user.uid ? "left" : "right"}
+              className={ele.from === user.uid ? "fromChat" : "myChat"}
+            >
+              <Text w="100%" fontSize={"17px"}>
                 {ele.message}
-              </p>
-            </div>
+              </Text>
+            </Box>
           </div>
         ))}
-      </div>
+      </Box>
 
       <div className="inputDiv">
-        <input
+        <Input
+          variant="unstyled"
+          boxSizing="border-box"
+          pl={"10px"}
           value={message}
-          className="chatInput"
+          size="lg"
           onChange={(e) => setMessage(e.target.value)}
           onKeyPress={(e) => e.key === "Enter" && submitChat()}
           placeholder="Enter Message"
-          style={{ width: "100%", height: "30px", paddingLeft: "15px" }}
         />
       </div>
     </div>
